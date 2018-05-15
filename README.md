@@ -1,6 +1,11 @@
 # LineageOTA
 A simple OTA REST Server for LineageOS OTA Updater System Application
 
+## Changes over julianxhokaxhui
+
+- Use pregenerated checkksums
+
+
 ## Requirements
 
 - Apache mod_rewrite enabled
@@ -36,10 +41,10 @@ then finally visit http://localhost/ to see the REST Server up and running.
 
 ## Where to move built ROM ZIPs
 
-- Full builds should be uploaded into `builds/full` directory.
+- Full builds should be uploaded into `builds/full` directory, along with a .md5sum file and a .prop, both as extensions over the .zip
 - Delta builds should be uploaded into `builds/delta` directory.
 
-### ONLY for LineageOS 15.x and newer
+### ONLY for LineageOS 15.x and newer (now for all)
 
 If you are willing to use this project on top of your LineageOS 15.x ( or newer ) ROM builds, you may have noticed that the file named `build.prop` have been removed inside your ZIP file, and has been instead integrated within your `system.new.dat` file, which is basically an ext4 image ( you can find out more here: https://source.android.com/devices/tech/ota/block ).
 
@@ -52,12 +57,13 @@ $ cd builds/full
 $ tree
 .
 ├── lineage-15.0-20171030-NIGHTLY-gts210vewifi.zip # the full ROM zip file
+├── lineage-15.0-20171030-NIGHTLY-gts210vewifi.zip.md5sum # the checksum, as a full output from the unix utility md5sum
 └── lineage-15.0-20171030-NIGHTLY-gts210vewifi.zip.prop # the ROM build.prop file
 ```
 
 ### What happens if no build.prop file is found
 
-The Server is able to serve the ZIP file via the API, also when a `build.prop` file is not given, by fetching those missing informations elsewhere ( related always to that ZIP file ). Although, as it's a trial way, it may be incorrect so don't rely too much on it.
+The Server is able to serve the ZIP file via the API, also when a `build.prop` file is not given, by fetching those missing informations elsewhere ( related always to that ZIP file ). Although, as it's a trial way, it may be incorrect so don't rely too much on it. It doesn't work.
 
 I am not sure how much this may help anyway, but this must be used as an extreme fallback scenario where you are not able to provide a `build.prop` for any reason. Instead, please always consider to find a way to obtain the prop file, in order to deliver a proper API response.
 
@@ -71,27 +77,20 @@ In order to integrate this REST Server within your ROM you have two possibilitie
 
 > Before integrating, make sure your OTA Server answers from a public URL. Also, make sure to know which is your path.
 >
-> For eg. if your URL is http://my.ota.uri/LineageOTA, then your API URL will be http://my.ota.uri/LineageOTA/api
+> For eg. if your URL is http://my.ota.uri/LineageOTA, then your API URL will be http://my.ota.uri/LineageOTA/api/v1/{device}/{type}
 
 ### Build.prop
 
 #### CyanogenMod / LineageOS ( <= 14.x )
-
-In order to integrate this in your CyanogenMod based ROM, you need to add the `cm.updater.uri` property ( for [CyanogenMod](https://github.com/CyanogenMod/android_packages_apps_CMUpdater/blob/cm-14.1/src/com/cyanogenmod/updater/service/UpdateCheckService.java#L206) or [Lineage](https://github.com/LineageOS/android_packages_apps_Updater/blob/cm-14.1/src/org/lineageos/updater/misc/Constants.java#L39) ) in your `build.prop` file. See this example:
-
-```properties
-# ...
-cm.updater.uri=http://my.ota.uri/api
-# ...
-```
+Use the original LineageOTA
 
 #### LineageOS ( >= 15.x)
 
-In order to integrate this in your LineageOS based ROM, you need to add the [`cm.updater.uri`](https://github.com/LineageOS/android_packages_apps_Updater/blob/lineage-15.0/src/org/lineageos/updater/misc/Constants.java#L38) property in your `build.prop` file. See this example:
+In order to integrate this in your LineageOS based ROM, you need to add the [`lineage.updater.uri`](https://github.com/LineageOS/android_packages_apps_Updater/blob/lineage-15.0/src/org/lineageos/updater/misc/Constants.java#L39) property in your `build.prop` file. See this example:
 
 ```properties
 # ...
-cm.updater.uri=http://my.ota.uri/api
+lineage.updater.uri=http://my.ota.uri/api/v1/{device}/{type}
 # ...
 ```
 
@@ -106,6 +105,13 @@ In order to integrate this in your [CyanogenMod](https://github.com/lineageos/an
 > Using the `build.prop` instead offers an easy and smooth integration, which could potentially be used even in local builds that make use fully of the official repos, but only updates through a local OTA REST Server. For example, by using the [docker-lineage-cicd](https://github.com/julianxhokaxhiu/docker-lineage-cicd) project.
 
 ## Changelog
+
+### v2.7.1
+
+- Fix Stuff
+- Speed Optimisations
+- Remove slow stuff
+- Note that files have to be NIGHTLY, not UNOFFICIAL, I think.
 
 ### v2.7.0
 
