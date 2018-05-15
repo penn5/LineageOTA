@@ -1,10 +1,15 @@
 # LineageOTA
 A simple OTA REST Server for LineageOS OTA Updater System Application
 
+## Install
+
+- Clone this into your WWW
+- Make sure you have enabled .htaccess (the file is included)
+- Profit!
+
 ## Changes over julianxhokaxhui
 
 - Use pregenerated checkksums
-
 
 ## Requirements
 
@@ -163,7 +168,7 @@ In order to integrate this in your [CyanogenMod](https://github.com/lineageos/an
 - Added support for LineageOS ( and kept support for current CyanogenMod ROMs, until they will transition to LineageOS)
 
 ### v2.0.6
-- Loop only between .ZIP files! Before even .TXT files were "parsed" which wasted some memory. Avoid this and make the REST server memory friendly :)
+- Loop only between .ZIP files! Before even .TXT files were "parsed" which wasted some memory. Avoid this and make the REST server memory friendly :)libirecovery
 - HTML Changelogs! If you will now create a changelog file next to your ZIP file with an HTML extension ( eg. `lineage-14.0-20161230-NIGHTLY-hammerhead.html` ) this will be preferred over .TXT ones! Otherwise fallback to the classic TXT extension ( eg. `lineage-14.0-20161230-NIGHTLY-hammerhead.txt` )
 
 ### v2.0.5
