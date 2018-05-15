@@ -1,10 +1,6 @@
 # LineageOTA
 A simple OTA REST Server for LineageOS OTA Updater System Application
 
-## Support
-
-Got a question? Not sure where it should be made? See [CONTRIBUTING](CONTRIBUTING.md).
-
 ## Requirements
 
 - Apache mod_rewrite enabled
@@ -85,34 +81,21 @@ In order to integrate this in your CyanogenMod based ROM, you need to add the `c
 
 ```properties
 # ...
-cm.updater.uri=http://my.ota.uri/api/v1/{device}/{type}/{incr}
+cm.updater.uri=http://my.ota.uri/api
 # ...
 ```
-
-> As of [e930cf7](https://github.com/LineageOS/android_packages_apps_Updater/commit/e930cf7f67d10afcd933dec75879426126d8579a):  
-> Optional placeholders replaced at runtime:  
->   {device} - Device name  
->   {type} - Build type  
->   {incr} - Incremental version
 
 #### LineageOS ( >= 15.x)
 
-In order to integrate this in your LineageOS based ROM, you need to add the [`lineage.updater.uri`](https://github.com/LineageOS/android_packages_apps_Updater/blob/lineage-15.0/src/org/lineageos/updater/misc/Constants.java#L39) property in your `build.prop` file. See this example:
+In order to integrate this in your LineageOS based ROM, you need to add the [`cm.updater.uri`](https://github.com/LineageOS/android_packages_apps_Updater/blob/lineage-15.0/src/org/lineageos/updater/misc/Constants.java#L38) property in your `build.prop` file. See this example:
 
 ```properties
 # ...
-lineage.updater.uri=http://my.ota.uri/api/v1/{device}/{type}/{incr}
+cm.updater.uri=http://my.ota.uri/api
 # ...
 ```
 
-> Since https://review.lineageos.org/#/c/191274/ is merged, the property `cm.updater.uri` is renamed to `lineage.updater.uri`. Make sure to update your entry.
-
-> As of [5252d60](https://github.com/LineageOS/android_packages_apps_Updater/commit/5252d606716c3f8d81617babc1293c122359a94d):  
-> Optional placeholders replaced at runtime:  
->   {device} - Device name  
->   {type} - Build type  
->   {incr} - Incremental version
-
+> Once https://review.lineageos.org/#/c/191274/ will be merged, the property `cm.updater.uri` will be renamed to `lineage.updater.uri`. Make sure to update your entry as soon as it is merged. This documentation will be updated as soon as it will happen.
 
 ### android_packages_apps_CMUpdater
 
@@ -123,13 +106,6 @@ In order to integrate this in your [CyanogenMod](https://github.com/lineageos/an
 > Using the `build.prop` instead offers an easy and smooth integration, which could potentially be used even in local builds that make use fully of the official repos, but only updates through a local OTA REST Server. For example, by using the [docker-lineage-cicd](https://github.com/julianxhokaxhiu/docker-lineage-cicd) project.
 
 ## Changelog
-
-### v2.8.0
-
-- Use md5sum files if available ( thanks to @jplitza )
-- Abort commandExists early if shell_exec is disabled ( thanks to @timschumi )
-- Update docs to match new uri formatting ( thanks to @twouters )
-- Add size field to JSON ( thanks to @syphyr )
 
 ### v2.7.0
 

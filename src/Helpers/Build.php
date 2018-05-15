@@ -3,6 +3,7 @@
         The MIT License (MIT)
 
         Copyright (c) 2016 Julian Xhokaxhiu
+        Copyright (c) 2018 Penn Mackintosh
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of
         this software and associated documentation files (the "Software"), to deal in
@@ -39,7 +40,6 @@
         private $filePath = '';
         private $buildProp = '';
         private $uid = null;
-        private $size = '';
 
         /**
          * Constructor of the Build class.
@@ -76,7 +76,7 @@
             // Try to load the build.prop from two possible paths:
             // - builds/CURRENT_ZIP_FILE.zip/system/build.prop
             // - builds/CURRENT_ZIP_FILE.zip.prop ( which must exist )
-            $this->buildProp = explode( "\n", @file_get_contents('zip://'.$this->filePath.'#system/build.prop') ?? @file_get_contents($filePath.'.prop') );
+            $this->buildProp = explode( "\n", @file_get_contents($filePath.'.prop') );
             // Try to fetch build.prop values. In some cases, we can provide a fallback, in other a null value will be given
             $this->timestamp = intval( $this->getBuildPropValue( 'ro.build.date.utc' ) ?? filemtime($this->filePath) );
             $this->incremental = $this->getBuildPropValue( 'ro.build.version.incremental' ) ?? '';
@@ -84,7 +84,6 @@
             $this->model = $this->getBuildPropValue( 'ro.lineage.device' ) ?? $this->getBuildPropValue( 'ro.cm.device' ) ?? ( $tokens[1] == 'cm' ? $tokens[6] : $tokens[5] );
             $this->version = $tokens[2];
             $this->uid = hash( 'sha256', $this->timestamp.$this->model.$this->apiLevel, false );
-            $this->size = filesize($this->filePath);
 
             $position = strrpos( $physicalPath, '/builds/full' );
             if ( $position === FALSE )
@@ -148,29 +147,12 @@
 
             if ( empty($path) ) $path = $this->filePath;
             // Pretty much faster if it is available
-            if ( file_exists( $path . ".md5sum" ) ) {
-                $tmp = explode("  ", file_get_contents( $path . '.md5sum' ));
-                $ret = $tmp[0];
-            }
-            elseif ( $this->commandExists( 'md5sum' ) ) {
-                $tmp = explode("  ", exec( 'md5sum ' . $path));
-                $ret = $tmp[0];
-            } else {
-                $ret = md5_file($path);
-            }
+            $ret = explode("  ", @file_get_contents($this->filePath . '.md5sum'))[0] ?: /*(explode("  ", exec( 'md5sum ' . $path)))[0]*/ '';
 
             return $ret;
         }
 
         /* Getters */
-
-        /**
-         * Get filesize of the current build
-         * @return string filesize in bytes
-         */
-        public function getSize() {
-          return $this->size;
-        }
 
         /**
          * Get a unique id of the current build
@@ -336,19 +318,7 @@
          * @return boolean Return True if available, False if not
          */
         private function commandExists($cmd){
-            if (!$this->functionEnabled('shell_exec'))
-                return false;
-
             $returnVal = shell_exec("which $cmd");
             return (empty($returnVal) ? false : true);
-        }
-
-        /**
-         * Checks if a php function is available on the server
-         * @param string $func The function to check for
-         * @return boolean true if the function is enabled, false if not
-         */
-        private function functionEnabled($func) {
-            return is_callable($func) && false === stripos(ini_get('disable_functions'), $func);
         }
     }

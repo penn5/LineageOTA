@@ -3,6 +3,7 @@
         The MIT License (MIT)
 
         Copyright (c) 2016 Julian Xhokaxhiu
+        Copyright (c) 2018 Penn Mackintosh
 
         Permission is hereby granted, free of charge, to any person obtaining a copy of
         this software and associated documentation files (the "Software"), to deal in
@@ -72,7 +73,6 @@
                     'datetime' => $build->getTimestamp(),
                     'version' => $build->getVersion(),
                     'id' => $build->getUid(),
-                    'size' => $build->getSize(),
                 ));
             }
 
